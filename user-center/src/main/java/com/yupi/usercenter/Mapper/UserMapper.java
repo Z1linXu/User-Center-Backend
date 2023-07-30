@@ -1,7 +1,8 @@
-package generator.mapper;
+package com.yupi.usercenter.Mapper;
 
-import generator.domain.User;
+import com.yupi.usercenter.model.domain.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
 * @author mac
@@ -9,6 +10,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @createDate 2023-07-26 18:27:28
 * @Entity generator.domain.User
 */
+@Mapper
 public interface UserMapper extends BaseMapper<User> {
 
 }

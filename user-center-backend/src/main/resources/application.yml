@@ -6,14 +6,12 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/yupi
     username: root
-    password: 123456
+    password: 741Xu741.
   # session 失效时间
   session:
     timeout: 86400
 server:
   port: 8080
-  servlet:
-    context-path: /api
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false

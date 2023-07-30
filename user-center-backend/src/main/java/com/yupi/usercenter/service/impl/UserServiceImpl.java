@@ -22,7 +22,7 @@ import static com.yupi.usercenter.contant.UserConstant.USER_LOGIN_STATE;
 /**
  * 用户服务实现类
  *
- * @author yupi
+ * @author Zilin Xu
  */
 @Service
 @Slf4j
@@ -33,56 +33,50 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private UserMapper userMapper;
 
     /**
-     * 盐值，混淆密码
+     * 盐值Salt，混淆密码 Password Obfuscation
      */
     private static final String SALT = "yupi";
 
     @Override
-    public long userRegister(String userAccount, String userPassword, String checkPassword, String planetCode) {
-        // 1. 校验
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, planetCode)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
+    public long userRegister(String userAccount, String userPassword, String checkPassword) {
+        // 1. Validation
+
+
+        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "Parameters are empty");
         }
         if (userAccount.length() < 4) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "User account is too short");
         }
         if (userPassword.length() < 8 || checkPassword.length() < 8) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "Password is too short");
         }
-        if (planetCode.length() > 5) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "星球编号过长");
-        }
-        // 账户不能包含特殊字符
+
+        // Account cannot contain special characters
         String validPattern = "[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+        //正则表达式语法
         Matcher matcher = Pattern.compile(validPattern).matcher(userAccount);
         if (matcher.find()) {
             return -1;
         }
-        // 密码和校验密码相同
+        // Password and confirmation password are the same
         if (!userPassword.equals(checkPassword)) {
             return -1;
         }
-        // 账户不能重复
+        // Account must be unique
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("userAccount", userAccount);
         long count = userMapper.selectCount(queryWrapper);
         if (count > 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "Account already exist");
         }
-        // 星球编号不能重复
-        queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("planetCode", planetCode);
-        count = userMapper.selectCount(queryWrapper);
-        if (count > 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "编号重复");
-        }
+
         // 2. 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
         // 3. 插入数据
         User user = new User();
         user.setUserAccount(userAccount);
         user.setUserPassword(encryptPassword);
-        user.setPlanetCode(planetCode);
         boolean saveResult = this.save(user);
         if (!saveResult) {
             return -1;
@@ -108,7 +102,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (matcher.find()) {
             return null;
         }
-        // 2. 加密
+        // 2. 加密Encryption
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
         // 查询用户是否存在
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -120,7 +114,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             log.info("user login failed, userAccount cannot match userPassword");
             return null;
         }
-        // 3. 用户脱敏
+        // 3. 用户脱敏 Data Masking
         User safetyUser = getSafetyUser(user);
         // 4. 记录用户的登录态
         request.getSession().setAttribute(USER_LOGIN_STATE, safetyUser);
@@ -128,7 +122,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     /**
-     * 用户脱敏
+     * 用户脱敏Data Masking
      *
      * @param originUser
      * @return
@@ -146,7 +140,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         safetyUser.setGender(originUser.getGender());
         safetyUser.setPhone(originUser.getPhone());
         safetyUser.setEmail(originUser.getEmail());
-        safetyUser.setPlanetCode(originUser.getPlanetCode());
         safetyUser.setUserRole(originUser.getUserRole());
         safetyUser.setUserStatus(originUser.getUserStatus());
         safetyUser.setCreateTime(originUser.getCreateTime());

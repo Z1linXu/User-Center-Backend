@@ -8,23 +8,22 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 用户服务
  *
- * @author yupi
+ * @author Zilin Xu
  */
 public interface UserService extends IService<User> {
 
     /**
-     * 用户注册
+     * User Registration
      *
      * @param userAccount   用户账户
      * @param userPassword  用户密码
      * @param checkPassword 校验密码
-     * @param planetCode 星球编号
      * @return 新用户 id
      */
-    long userRegister(String userAccount, String userPassword, String checkPassword, String planetCode);
+    long userRegister(String userAccount, String userPassword, String checkPassword);
 
     /**
-     * 用户登录
+     * User Login
      *
      * @param userAccount  用户账户
      * @param userPassword 用户密码

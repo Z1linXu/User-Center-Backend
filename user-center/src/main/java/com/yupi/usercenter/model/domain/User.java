@@ -1,4 +1,4 @@
-package generator.domain;
+package com.yupi.usercenter.model.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

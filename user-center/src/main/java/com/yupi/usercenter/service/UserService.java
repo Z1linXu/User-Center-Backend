@@ -1,6 +1,6 @@
-package generator.service;
+package com.yupi.usercenter.service;
 
-import generator.domain.User;
+import com.yupi.usercenter.model.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
