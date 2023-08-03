@@ -77,6 +77,23 @@ public class UserController {
 
     }
 
+    @GetMapping("/current")
+    public User getCurrentUser(HttpServletRequest request){
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        //把user object强转为user类型
+        User currentUser = (User) userObj;
+        //如果user等于空
+        if(currentUser == null) {
+            return null;
+        }
+        long userId = currentUser.getId();
+        // TODO 校验用户是否合法
+
+        //查数据库来获取用户信息
+        User user = userService.getById(userId);
+        return userService.getSafetyUser(user);
+    }
+
     /**
      * Search user
      * @param username
