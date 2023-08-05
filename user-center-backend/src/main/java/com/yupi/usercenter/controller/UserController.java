@@ -43,12 +43,13 @@ public class UserController {
         String userAccount = userRegisterRequest.getUserAccount();
         String userPassword = userRegisterRequest.getUserPassword();
         String checkPassword = userRegisterRequest.getCheckPassword();
+        String SerialNumber = userRegisterRequest.getSerialNumber();
 
         //check any information is null
-        if(StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)){
+        if(StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, SerialNumber)){
             return null;
         }
-        return userService.userRegister (userAccount, userPassword, checkPassword);
+        return userService.userRegister (userAccount, userPassword, checkPassword,SerialNumber);
 
 
     }
@@ -77,6 +78,27 @@ public class UserController {
 
     }
 
+    /**
+     * User Logout
+     * @param request
+     * @return
+     */
+    @PostMapping("/logout")
+    public Integer userLogout(HttpServletRequest request){
+        //check request is null or not
+        if (request == null){
+            return null;
+        }
+        return userService.userLogout (request);
+
+
+    }
+
+    /**
+     * Get Current User
+     * @param request
+     * @return
+     */
     @GetMapping("/current")
     public User getCurrentUser(HttpServletRequest request){
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);

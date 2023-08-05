@@ -38,7 +38,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private static final String SALT = "yupi";
 
     @Override
-    public long userRegister(String userAccount, String userPassword, String checkPassword) {
+    public long userRegister(String userAccount, String userPassword, String checkPassword, String serialNumber) {
         // 1. Validation
 
 
@@ -50,6 +50,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         if (userPassword.length() < 8 || checkPassword.length() < 8) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "Password is too short");
+        }
+        if(serialNumber.length()>5) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "Invalid  Serial Number");
         }
 
         // Account cannot contain special characters
@@ -70,6 +73,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (count > 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "Account already exist");
         }
+        // Serial Number must be unique
+        queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("SerialNumber", serialNumber);
+        count = userMapper.selectCount(queryWrapper);
+        if (count > 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "serialNumber already exist");
+        }
 
         // 2. 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
@@ -77,6 +87,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = new User();
         user.setUserAccount(userAccount);
         user.setUserPassword(encryptPassword);
+        user.setSerialNumber(serialNumber);
         boolean saveResult = this.save(user);
         if (!saveResult) {
             return -1;
@@ -145,6 +156,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         safetyUser.setCreateTime(originUser.getCreateTime());
         safetyUser.setUpdateTime(originUser.getUpdateTime());
         safetyUser.setIsDelete(originUser.getIsDelete());
+        safetyUser.setSerialNumber(originUser.getSerialNumber());
         return safetyUser;
     }
 
