@@ -83,7 +83,7 @@ public class User implements Serializable {
     /**
      * Serial Number
      */
-    private String SerialNumber;
+    private String serialNumber;
 
 
     @TableField(exist = false)

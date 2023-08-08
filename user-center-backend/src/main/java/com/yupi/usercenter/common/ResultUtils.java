@@ -3,7 +3,7 @@ package com.yupi.usercenter.common;
 /**
  * 返回工具类
  *
- * @author yupi
+ * @author Zilin Xu
  */
 public class ResultUtils {
 

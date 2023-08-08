@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 /**
  * 全局异常处理器
  *
- * @author yupi
+ * @author Zilin Xu
  */
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-
+    //通过注解去定义了什么异常去做什么注解
     @ExceptionHandler(BusinessException.class)
     public BaseResponse businessExceptionHandler(BusinessException e) {
         log.error("businessException: " + e.getMessage(), e);

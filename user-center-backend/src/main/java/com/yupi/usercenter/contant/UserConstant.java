@@ -3,7 +3,7 @@ package com.yupi.usercenter.contant;
 /**
  * 用户常量
  *
- * @author yupi
+ * @author Zilin Xu
  */
 public interface UserConstant {
 

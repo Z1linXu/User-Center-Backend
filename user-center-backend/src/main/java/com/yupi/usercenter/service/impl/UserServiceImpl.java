@@ -60,11 +60,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //正则表达式语法
         Matcher matcher = Pattern.compile(validPattern).matcher(userAccount);
         if (matcher.find()) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"存在违规符号");
         }
         // Password and confirmation password are the same
         if (!userPassword.equals(checkPassword)) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"Password and confirmation password are the same");
         }
         // Account must be unique
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -75,7 +75,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         // Serial Number must be unique
         queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("SerialNumber", serialNumber);
+        queryWrapper.eq("serialNumber", serialNumber);
         count = userMapper.selectCount(queryWrapper);
         if (count > 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "serialNumber already exist");
@@ -90,7 +90,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         user.setSerialNumber(serialNumber);
         boolean saveResult = this.save(user);
         if (!saveResult) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "save error");
         }
         return user.getId();
     }
@@ -99,13 +99,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public User userLogin(String userAccount, String userPassword, HttpServletRequest request) {
         // 1. 校验
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "Invalid Account or Password.");
         }
         if (userAccount.length() < 4) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "At least four character");
         }
         if (userPassword.length() < 8) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "Can not longer than 8");
         }
         // 账户不能包含特殊字符
         String validPattern = "[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
@@ -123,7 +123,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 用户不存在
         if (user == null) {
             log.info("user login failed, userAccount cannot match userPassword");
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "User not exists");
         }
         // 3. 用户脱敏 Data Masking
         User safetyUser = getSafetyUser(user);
@@ -141,7 +141,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public User getSafetyUser(User originUser)  {
         if (originUser == null) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "origin user equal null");
         }
         User safetyUser = new User();
         safetyUser.setId(originUser.getId());

@@ -8,8 +8,10 @@ import java.io.Serializable;
  * 通用返回类
  *
  * @param <T>
- * @author yupi
+ * @author Zilin Xu
  */
+//@Data 是lombok注解 自动生成getset方法
+
 @Data
 public class BaseResponse<T> implements Serializable {
 
