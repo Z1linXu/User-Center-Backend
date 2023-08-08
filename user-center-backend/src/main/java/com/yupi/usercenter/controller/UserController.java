@@ -117,7 +117,7 @@ public class UserController {
         User currentUser = (User) userObj;
         //如果user等于空
         if(currentUser == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "user is null");
+            throw new BusinessException(ErrorCode.NOT_LOGIN, "user is null");
         }
         long userId = currentUser.getId();
         // TODO 校验用户是否合法
