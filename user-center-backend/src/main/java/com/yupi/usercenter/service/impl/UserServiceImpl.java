@@ -60,7 +60,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //正则表达式语法
         Matcher matcher = Pattern.compile(validPattern).matcher(userAccount);
         if (matcher.find()) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"存在违规符号");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"Contains Invalid Characters");
         }
         // Password and confirmation password are the same
         if (!userPassword.equals(checkPassword)) {

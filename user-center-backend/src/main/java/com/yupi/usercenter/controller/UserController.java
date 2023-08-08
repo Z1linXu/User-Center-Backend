@@ -42,7 +42,7 @@ public class UserController {
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest){
         //check request is null or not
         if (userRegisterRequest == null){
-            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "register request is null");
         }
         String userAccount = userRegisterRequest.getUserAccount();
         String userPassword = userRegisterRequest.getUserPassword();
@@ -51,7 +51,7 @@ public class UserController {
 
         //check any information is null
         if(StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, serialNumber)){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "Missing Information");
         }
         long result = userService.userRegister (userAccount, userPassword, checkPassword,serialNumber);
         //return new BaseResponse<>(0,result,"ok");
@@ -70,14 +70,14 @@ public class UserController {
     public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request){
         //check request is null or not
         if (userLoginRequest == null){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "login request is null");
         }
         String userAccount = userLoginRequest.getUserAccount();
         String userPassword = userLoginRequest.getUserPassword();
 
         //check any information is null
         if(StringUtils.isAnyBlank(userAccount, userPassword)){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,  "Missing Information");
         }
         User user =  userService.userLogin (userAccount, userPassword, request);
         //return new BaseResponse<>(0, user, "ok");
@@ -96,7 +96,7 @@ public class UserController {
     public BaseResponse<Integer> userLogout(HttpServletRequest request){
         //check request is null or not
         if (request == null){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "logout request is null");
         }
         Integer result= userService.userLogout (request);
         return ResultUtils.success(result);
@@ -117,7 +117,7 @@ public class UserController {
         User currentUser = (User) userObj;
         //如果user等于空
         if(currentUser == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "user is null");
         }
         long userId = currentUser.getId();
         // TODO 校验用户是否合法
@@ -138,7 +138,7 @@ public class UserController {
         //鉴权
         if(!isAdmin(request)){
             //return new ArrayList<>();
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            throw new BusinessException(ErrorCode.NO_AUTH,"No permission.");
         }
 
         QueryWrapper<User> queryWrapper= new QueryWrapper<>();
@@ -161,11 +161,11 @@ public class UserController {
     public BaseResponse<Boolean> deleteUser(@RequestBody long id, HttpServletRequest request){
         //鉴权
         if(!isAdmin(request)){
-            throw new BusinessException(ErrorCode.NO_AUTH);
+            throw new BusinessException(ErrorCode.NO_AUTH,"No permission.");
         }
 
         if(id<=0){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"ID can not smaller than 0");
         }
 
         boolean b =  userService.removeById(id);
